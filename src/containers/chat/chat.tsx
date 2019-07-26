@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { RootReducer } from '../../redux/reducers'
+import { AnyAction } from 'redux';
 
 import './chat.scss';
 import { getChatMessages } from '../../redux/selectors/messages';
@@ -9,7 +10,7 @@ import { addMessage } from '../../redux/actions/messages';
 import { TWITCH_CHAT_ADDRESS } from '../../shared/constants';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
-import { AnyAction } from 'redux';
+import LoginFormContainter from '../login-form/login-form';
 
 interface Props {
     addMessage: (message: ChatMessage) => AnyAction;
@@ -17,40 +18,45 @@ interface Props {
 }
 interface State {
     userInput: string;
+    isLoggedIn: boolean;
 }
 
 class Chat extends React.Component<Props, State>{
     wsConn: WebSocket = {} as WebSocket;
     constructor(props: Props) {
         super(props);
-        this.props.addMessage({
-            content: 'Hello World',
-            from: 'System',
-            dateTime: new Date(),
-            stream: 'local',
-        });
         this.state = {
             userInput: '',
+            isLoggedIn: false,
         };
     }
 
-    dialTwitchWSS = () => {
+    dialTwitchWSS = (username: string, oauthToken: string) => {
         this.wsConn = new WebSocket(TWITCH_CHAT_ADDRESS);
         this.wsConn.addEventListener('error', (e) => {
             // TODO: Connection error handler
-            console.log(e);
+            console.error(e);
         });
         this.wsConn.addEventListener('message', (e) => {
             // TODO: Send message to twitch
             console.log(e);
+            this.props.addMessage({
+                content: e.data,
+                from: 'Twitch',
+                stream: 'idk'
+            })
         });
         this.wsConn.addEventListener('open', (e) => {
             // TODO: Connection success handler
             console.log(e);
+            this.wsConn.send(`PASS ${oauthToken}`);
+            this.wsConn.send(`NICK ${username}`);
+            this.setState(() => ({ isLoggedIn: true }));
         });
         this.wsConn.addEventListener('close', (e) => {
             // TODO: close/retry handler
             console.log(e);
+            this.setState(() => ({ isLoggedIn: false }));
         });
     }
 
@@ -65,9 +71,13 @@ class Chat extends React.Component<Props, State>{
         this.setState(() => ({ userInput: '' }));
     }
 
+    handleLoginSubmit = (username: string, oauthToken: string) => {
+        this.dialTwitchWSS(username, oauthToken);
+    }
+
     render() {
-        return (
-            <div className="chat" >
+        return this.state.isLoggedIn ?
+            (<div className="chat" >
                 <div className="chat-messages">
                     {this.props.chatMessages.map((message, index) => (
                         <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
@@ -80,8 +90,8 @@ class Chat extends React.Component<Props, State>{
                         onSubmit={this.handleChatInputSubmit}
                     ></ChatInputComponent>
                 </div>
-            </div >
-        )
+            </div>) :
+            (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
     }
 }
 
