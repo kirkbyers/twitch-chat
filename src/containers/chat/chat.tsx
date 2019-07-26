@@ -8,13 +8,16 @@ import { ChatMessage } from '../../interfaces/messages';
 import { addMessage } from '../../redux/actions/messages';
 import { TWITCH_CHAT_ADDRESS } from '../../shared/constants';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
+import ChatInputComponent from '../../components/chat-input/chat-input';
 import { AnyAction } from 'redux';
 
 interface Props {
     addMessage: (message: ChatMessage) => AnyAction;
     chatMessages: ChatMessage[];
 }
-interface State { }
+interface State {
+    userInput: string;
+}
 
 class Chat extends React.Component<Props, State>{
     wsConn: WebSocket = {} as WebSocket;
@@ -24,11 +27,14 @@ class Chat extends React.Component<Props, State>{
             content: 'Hello World',
             from: 'System',
             dateTime: new Date(),
-            stream: 'local'
+            stream: 'local',
         });
+        this.state = {
+            userInput: '',
+        };
     }
 
-    dialTwitchWSS() {
+    dialTwitchWSS = () => {
         this.wsConn = new WebSocket(TWITCH_CHAT_ADDRESS);
         this.wsConn.addEventListener('error', (e) => {
             // TODO: Connection error handler
@@ -48,17 +54,32 @@ class Chat extends React.Component<Props, State>{
         });
     }
 
+    handleChatInputSubmit = () => {
+        const newMessage: ChatMessage = {
+            content: this.state.userInput,
+            dateTime: new Date(),
+            from: 'You',
+            stream: 'This stream',
+        };
+        this.props.addMessage(newMessage);
+        this.setState(() => ({ userInput: '' }));
+    }
+
     render() {
         return (
             <div className="chat" >
-                This is the chat wrapper
                 <div className="chat-messages">
-                    This is the message box
                     {this.props.chatMessages.map((message, index) => (
                         <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
                     ))}
                 </div>
-                <div className="chat-input">This is the chat input</div>
+                <div className="chat-input">
+                    <ChatInputComponent
+                        value={this.state.userInput}
+                        onChange={(e) => this.setState({ userInput: e.target.value })}
+                        onSubmit={this.handleChatInputSubmit}
+                    ></ChatInputComponent>
+                </div>
             </div >
         )
     }
