@@ -1,0 +1,1 @@
+export const TWITCH_CHAT_ADDRESS = 'wss://irc-ws.chat.twitch.tv:443';
