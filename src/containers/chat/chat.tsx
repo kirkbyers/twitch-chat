@@ -4,9 +4,9 @@ import { RootReducer } from '../../redux/reducers'
 import { AnyAction } from 'redux';
 
 import './chat.scss';
-import { getChatMessages } from '../../redux/selectors/messages';
+import { getSelectedStreamMessages } from '../../redux/selectors/messages';
 import { ChatMessage } from '../../interfaces/messages';
-import { addMessage } from '../../redux/actions/messages';
+import { addMessage, addStream, selectStream } from '../../redux/actions/messages';
 import { TwitchWebSocket } from '../../shared/websockets';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
@@ -14,6 +14,8 @@ import LoginFormContainter from '../login-form/login-form';
 
 interface Props {
     addMessage: (message: ChatMessage) => AnyAction;
+    addStream: (stream: string) => AnyAction;
+    selectStream: (stream: string) => AnyAction;
     chatMessages: ChatMessage[];
 }
 interface State {
@@ -87,12 +89,14 @@ class Chat extends React.Component<Props, State>{
 }
 
 const mapStateToProps = (state: RootReducer) => {
-    const chatMessages = getChatMessages(state);
+    const chatMessages = getSelectedStreamMessages(state);
     return { chatMessages };
 }
 
 const mapDispatchToProps = {
-    addMessage
+    addMessage,
+    addStream,
+    selectStream
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);
