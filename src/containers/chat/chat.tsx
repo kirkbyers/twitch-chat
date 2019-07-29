@@ -7,7 +7,7 @@ import './chat.scss';
 import { getChatMessages } from '../../redux/selectors/messages';
 import { ChatMessage } from '../../interfaces/messages';
 import { addMessage } from '../../redux/actions/messages';
-import { TWITCH_CHAT_ADDRESS } from '../../shared/constants';
+import { TwitchWebSocket } from '../../shared/websockets';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
 import LoginFormContainter from '../login-form/login-form';
@@ -22,41 +22,32 @@ interface State {
 }
 
 class Chat extends React.Component<Props, State>{
-    wsConn: WebSocket = {} as WebSocket;
+    wsConn: TwitchWebSocket;
     constructor(props: Props) {
         super(props);
         this.state = {
             userInput: '',
             isLoggedIn: false,
         };
+        this.wsConn = new TwitchWebSocket();
     }
 
     dialTwitchWSS = (username: string, oauthToken: string) => {
-        this.wsConn = new WebSocket(TWITCH_CHAT_ADDRESS);
-        this.wsConn.addEventListener('error', (e) => {
-            // TODO: Connection error handler
-            console.error(e);
-        });
-        this.wsConn.addEventListener('message', (e) => {
-            // TODO: Send message to twitch
-            console.log(e);
-            this.props.addMessage({
-                content: e.data,
-                from: 'Twitch',
-                stream: 'idk'
-            })
-        });
-        this.wsConn.addEventListener('open', (e) => {
-            // TODO: Connection success handler
-            console.log(e);
-            this.wsConn.send(`PASS ${oauthToken}`);
-            this.wsConn.send(`NICK ${username}`);
+        this.wsConn.dial().then(() => {
+            this.wsConn.signIn(username, oauthToken);
             this.setState(() => ({ isLoggedIn: true }));
-        });
-        this.wsConn.addEventListener('close', (e) => {
-            // TODO: close/retry handler
-            console.log(e);
-            this.setState(() => ({ isLoggedIn: false }));
+            this.wsConn.connection.addEventListener('message', (event) => {
+                this.wsConn.parseWSMessage(event).forEach((message) => {
+                    if (!!message) {
+                        this.props.addMessage(message);
+                    }
+                });
+                this.wsConn.connection.addEventListener('close', (e) => {
+                    // TODO: close/retry handler
+                    console.log(e);
+                    this.setState(() => ({ isLoggedIn: false }));
+                });
+            });
         });
     }
 
