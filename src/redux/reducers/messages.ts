@@ -18,13 +18,15 @@ export default function (state: MessageState = initState, action: AnyAction): Me
     switch (action.type) {
         case ADD_MESSAGE: {
             const newMessage = action.payload as ChatMessage;
+            const newChatMessages = state.chatMessages[state.chatMessagesByStream[newMessage.stream]].slice();
+            newChatMessages.push(newMessage);
             const newState = Object.assign({}, state);
-            newState.chatMessages[state.chatMessagesByStream[newMessage.from]].push(newMessage);
+            newState.chatMessages[state.chatMessagesByStream[newMessage.stream]] = newChatMessages;
             return newState;
         }
         case ADD_STREAM: {
             const newState = Object.assign({}, state);
-            const newStreamMessagesId = newState.chatMessages.push([]);
+            const newStreamMessagesId = newState.chatMessages.push([]) - 1;
             newState.chatMessagesByStream[action.payload] = newStreamMessagesId;
             return newState;
         }

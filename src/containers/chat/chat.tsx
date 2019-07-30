@@ -69,9 +69,10 @@ class Chat extends React.Component<Props, State>{
 
     render() {
         return this.state.isLoggedIn ?
-            ([<StreamSelectorComponent></StreamSelectorComponent>, <div className="chat" >
-                <div className="chat-messages">
-                    {this.props.chatMessages.map((message, index) => (
+            (<div className="chat-messages">
+                <StreamSelectorComponent></StreamSelectorComponent>
+                <div className="chat" >
+                    {this.props.chatMessages.length > 0 && this.props.chatMessages.map((message, index) => (
                         <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
                     ))}
                 </div>
@@ -82,7 +83,7 @@ class Chat extends React.Component<Props, State>{
                         onSubmit={this.handleChatInputSubmit}
                     ></ChatInputComponent>
                 </div>
-            </div>]) :
+            </div>) :
             (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
     }
 }
