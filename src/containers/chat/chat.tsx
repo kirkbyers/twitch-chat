@@ -4,18 +4,17 @@ import { RootReducer } from '../../redux/reducers'
 import { AnyAction } from 'redux';
 
 import './chat.scss';
-import { getSelectedStreamMessages } from '../../redux/selectors/messages';
+import { getSelectedStreamMessages, getStreams } from '../../redux/selectors/messages';
 import { ChatMessage } from '../../interfaces/messages';
-import { addMessage, addStream, selectStream } from '../../redux/actions/messages';
+import { addMessage, } from '../../redux/actions/messages';
 import { TwitchWebSocket } from '../../shared/websockets';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
+import StreamSelectorComponent from '../stream-selector/stream-selector';
 import LoginFormContainter from '../login-form/login-form';
 
 interface Props {
     addMessage: (message: ChatMessage) => AnyAction;
-    addStream: (stream: string) => AnyAction;
-    selectStream: (stream: string) => AnyAction;
     chatMessages: ChatMessage[];
 }
 interface State {
@@ -69,7 +68,8 @@ class Chat extends React.Component<Props, State>{
     }
 
     render() {
-        return this.state.isLoggedIn ?
+        return [<StreamSelectorComponent></StreamSelectorComponent>,
+        this.state.isLoggedIn ?
             (<div className="chat" >
                 <div className="chat-messages">
                     {this.props.chatMessages.map((message, index) => (
@@ -84,7 +84,7 @@ class Chat extends React.Component<Props, State>{
                     ></ChatInputComponent>
                 </div>
             </div>) :
-            (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
+            (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)]
     }
 }
 
@@ -94,9 +94,7 @@ const mapStateToProps = (state: RootReducer) => {
 }
 
 const mapDispatchToProps = {
-    addMessage,
-    addStream,
-    selectStream
+    addMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);
