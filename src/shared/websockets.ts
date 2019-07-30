@@ -4,7 +4,6 @@ import { ChatMessage } from '../interfaces/messages';
 export class TwitchWebSocket {
     address: string = TWITCH_CHAT_ADDRESS;
     connection: WebSocket = {} as WebSocket;
-    constructor() { }
 
     dial = async (): Promise<WebSocket> => {
         const result = new WebSocket(this.address);
@@ -70,3 +69,5 @@ export class TwitchWebSocket {
         this.connection.send(`PRIVMSG #${channel}> :${message}`);
     }
 }
+
+export default new TwitchWebSocket();

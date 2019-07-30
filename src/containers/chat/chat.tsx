@@ -4,10 +4,10 @@ import { RootReducer } from '../../redux/reducers'
 import { AnyAction } from 'redux';
 
 import './chat.scss';
-import { getSelectedStreamMessages, getStreams } from '../../redux/selectors/messages';
+import { getSelectedStreamMessages } from '../../redux/selectors/messages';
 import { ChatMessage } from '../../interfaces/messages';
 import { addMessage, } from '../../redux/actions/messages';
-import { TwitchWebSocket } from '../../shared/websockets';
+import twitchWebSocket, { TwitchWebSocket } from '../../shared/websockets';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
 import StreamSelectorComponent from '../stream-selector/stream-selector';
@@ -30,7 +30,7 @@ class Chat extends React.Component<Props, State>{
             userInput: '',
             isLoggedIn: false,
         };
-        this.wsConn = new TwitchWebSocket();
+        this.wsConn = twitchWebSocket;
     }
 
     dialTwitchWSS = (username: string, oauthToken: string) => {
@@ -68,9 +68,8 @@ class Chat extends React.Component<Props, State>{
     }
 
     render() {
-        return [<StreamSelectorComponent></StreamSelectorComponent>,
-        this.state.isLoggedIn ?
-            (<div className="chat" >
+        return this.state.isLoggedIn ?
+            ([<StreamSelectorComponent></StreamSelectorComponent>, <div className="chat" >
                 <div className="chat-messages">
                     {this.props.chatMessages.map((message, index) => (
                         <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
@@ -83,8 +82,8 @@ class Chat extends React.Component<Props, State>{
                         onSubmit={this.handleChatInputSubmit}
                     ></ChatInputComponent>
                 </div>
-            </div>) :
-            (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)]
+            </div>]) :
+            (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
     }
 }
 
