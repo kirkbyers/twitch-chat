@@ -8,7 +8,7 @@ export interface UserState {
 
 const initState: UserState = {
     username: localStorage.getItem('userstore_username') || '',
-    oauthToken: localStorage.getItem('') || ''
+    oauthToken: localStorage.getItem('userstore_oauthToken') || ''
 };
 
 export default function (state: UserState = initState, action: AnyAction): UserState {
