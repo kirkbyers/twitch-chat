@@ -33,6 +33,13 @@ class Chat extends React.Component<Props, State>{
         this.wsConn = twitchWebSocket;
     }
 
+    componentWillUnmount = () => {
+        this.wsConn.close();
+        this.setState(() => ({
+            isLoggedIn: false
+        }))
+    }
+
     dialTwitchWSS = (username: string, oauthToken: string) => {
         this.wsConn.dial().then(() => {
             this.wsConn.signIn(username, oauthToken);
