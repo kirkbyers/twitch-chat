@@ -1,9 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { AnyAction } from 'redux';
+import { Button, Form, Input, Row, Col } from 'antd'
+
+import './login-form.scss';
 import { RootReducer } from '../../redux/reducers';
 import { getUsername, getOauthToken } from '../../redux/selectors/user';
 import { updateUsername, updateOauthToken } from '../../redux/actions/user';
-import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
+
 
 interface Props {
     onSubmit: (username: string, oauthToken: string) => void;
@@ -49,11 +53,21 @@ class LoginFormContainer extends React.Component<Props, State> {
 
     render() {
         return (
-            <form onSubmit={this.handleFormSubmit}>
-                <input type="text" name="username" value={this.props.username} onChange={this.handleFormValueUpdate} placeholder="Username" />
-                <input type="password" name="oauthToken" value={this.props.oauthToken} onChange={this.handleFormValueUpdate} placeholder="OAuth Token" />
-                <button type="submit">Login</button>
-            </form>
+            <Row type="flex" align="middle" justify="center" className="login-form">
+                <Col span={12}>
+                    <Form onSubmit={this.handleFormSubmit}>
+                        <Form.Item>
+                            <Input size="large" type="text" name="username" allowClear value={this.props.username} onChange={this.handleFormValueUpdate} placeholder="Username" />
+                        </Form.Item>
+                        <Form.Item>
+                            <Input.Password size="large" type="password" name="oauthToken" value={this.props.oauthToken} onChange={this.handleFormValueUpdate} placeholder="OAuth Token" />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">Login</Button>
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
         );
     }
 }
