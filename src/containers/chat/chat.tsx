@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RootReducer } from '../../redux/reducers'
 import { AnyAction } from 'redux';
+import { Row, Col } from 'antd';
 
 import './chat.scss';
 import { getSelectedStreamMessages } from '../../redux/selectors/messages';
@@ -12,6 +12,7 @@ import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
 import StreamSelectorComponent from '../stream-selector/stream-selector';
 import LoginFormContainter from '../login-form/login-form';
+import { RootReducer } from '../../redux/reducers'
 
 interface Props {
     addMessage: (message: ChatMessage) => AnyAction;
@@ -76,21 +77,25 @@ class Chat extends React.Component<Props, State>{
 
     render() {
         return this.state.isLoggedIn ?
-            (<div className="chat-messages">
-                <StreamSelectorComponent></StreamSelectorComponent>
-                <div className="chat" >
-                    {this.props.chatMessages.length > 0 && this.props.chatMessages.map((message, index) => (
-                        <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
-                    ))}
-                </div>
-                <div className="chat-input">
-                    <ChatInputComponent
-                        value={this.state.userInput}
-                        onChange={(e) => this.setState({ userInput: e.target.value })}
-                        onSubmit={this.handleChatInputSubmit}
-                    ></ChatInputComponent>
-                </div>
-            </div>) :
+            (<Row type="flex" className="chat-messages" align="bottom" justify="center">
+                <Col span={18}>
+                    <StreamSelectorComponent></StreamSelectorComponent>
+                    <Row type="flex" className="chat">
+                        {this.props.chatMessages.length > 0 && this.props.chatMessages.map((message, index) => (
+                            <Col span={24}>
+                                <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
+                            </Col>
+                        ))}
+                    </Row>
+                    <Row type="flex" className="chat-input">
+                        <ChatInputComponent
+                            value={this.state.userInput}
+                            onChange={(e) => this.setState({ userInput: e.target.value })}
+                            onSubmit={this.handleChatInputSubmit}
+                        ></ChatInputComponent>
+                    </Row>
+                </Col>
+            </Row>) :
             (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
     }
 }

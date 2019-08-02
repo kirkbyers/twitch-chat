@@ -1,0 +1,9 @@
+.input {
+    display: flex;
+    &-field, &-button {
+        display: inline-block;
+    }
+    &-field {
+        flex: 1;
+    }
+}

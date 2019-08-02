@@ -1,4 +1,7 @@
 import React from 'react';
+import { Col, Input, Button } from 'antd';
+
+import './chat-input.scss';
 
 interface Props {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => any;
@@ -7,10 +10,10 @@ interface Props {
 }
 
 const ChatInputComponent: React.SFC<Props> = ({ onChange, onSubmit, value }) => (
-    <div className="input">
-        <input className="input-field" type="text" value={value} onChange={onChange} />
-        <button className="input-button" type="button" onClick={onSubmit}>Send</button>
-    </div>
+    <Col className="input" span={24} >
+        <Input allowClear className="input-field" type="text" value={value} onChange={onChange} />
+        <Button className="input-button" onClick={onSubmit}>Send</Button>
+    </Col>
 );
 
 
