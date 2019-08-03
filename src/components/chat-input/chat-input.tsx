@@ -11,7 +11,7 @@ interface Props {
 
 const ChatInputComponent: React.SFC<Props> = ({ onChange, onSubmit, value }) => (
     <Col className="input" span={24} >
-        <Input allowClear className="input-field" type="text" value={value} onChange={onChange} />
+        <Input allowClear className="input-field" type="text" value={value} onChange={onChange} placeholder="Send Message" />
         <Button className="input-button" onClick={onSubmit}>Send</Button>
     </Col>
 );

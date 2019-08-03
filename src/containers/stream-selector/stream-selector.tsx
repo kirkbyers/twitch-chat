@@ -1,15 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { Button, Form, Input } from 'antd';
 
 import './stream-selector.scss';
 import { RootReducer } from '../../redux/reducers';
 import { getStreams, getSelectedStream } from '../../redux/selectors/messages';
 import { addStream, selectStream } from '../../redux/actions/messages';
-import { connect } from 'react-redux';
 
 interface Props {
     streams: string[];
     onAddStream: (stream: string) => void;
     selectStream: (stream: string) => any;
+    selectedStream: string;
 }
 
 interface State {
@@ -40,17 +42,16 @@ class StreamSelectorComponent extends React.Component<Props, State>{
     }
 
     render() {
+        const { selectedStream } = this.props;
         return (
             <div className="stream-selector">
-                <ul className="stream-list">
-                    {this.props.streams.map((item, key) => (
-                        <li key={key} onClick={this.handleStreamClick(item)}>{item}</li>
-                    ))}
-                </ul>
-                <form onSubmit={this.handleFormSubmit}>
-                    <input type="text" name="stream" onChange={this.handleInputChange} value={this.state.newStream} />
-                    <button type="submit" hidden={true}></button>
-                </form>
+                <Form onSubmit={this.handleFormSubmit}>
+                    <Input type="text" name="stream" allowClear onChange={this.handleInputChange} value={this.state.newStream} placeholder="Add Stream Chat" />
+                    <Button htmlType="submit" hidden={true}></Button>
+                </Form>
+                {this.props.streams.map((item, key) => (
+                    <Button key={key} shape="round" type={selectedStream === item ? 'default' : 'dashed'} onClick={this.handleStreamClick(item)}>{item}</Button>
+                ))}
             </div>
         );
     };
