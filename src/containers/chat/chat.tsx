@@ -80,10 +80,10 @@ class Chat extends React.Component<Props, State>{
             (<Row type="flex" className="chat-messages" align="bottom" justify="center">
                 <Col span={18}>
                     <StreamSelectorComponent></StreamSelectorComponent>
-                    <Row type="flex" className="chat">
+                    <Row type="flex" className="chat" align="bottom" justify="start">
                         {this.props.chatMessages.length > 0 && this.props.chatMessages.map((message, index) => (
-                            <Col span={24}>
-                                <ChatMessageComponent message={message} key={index}></ChatMessageComponent>
+                            <Col span={24} key={index}>
+                                <ChatMessageComponent message={message}></ChatMessageComponent>
                             </Col>
                         ))}
                     </Row>

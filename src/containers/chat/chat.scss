@@ -1,3 +1,14 @@
 .chat-messages {
     height: 100%;
+    > .ant-col {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+}
+
+.chat {
+    flex: 1;
+    max-height: calc(100% - 64px);
+    overflow: scroll;
 }

@@ -44,7 +44,7 @@ class StreamSelectorComponent extends React.Component<Props, State>{
             <div className="stream-selector">
                 <ul className="stream-list">
                     {this.props.streams.map((item, key) => (
-                        <li key={key} onClick={this.handleStreamClick(item)} value={item}>{item}</li>
+                        <li key={key} onClick={this.handleStreamClick(item)}>{item}</li>
                     ))}
                 </ul>
                 <form onSubmit={this.handleFormSubmit}>

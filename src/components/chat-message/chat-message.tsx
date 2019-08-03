@@ -8,7 +8,7 @@ interface Props {
 
 const ChatMessageComponent: React.SFC<Props> = ({ message, ...rest }) => (
     <div className="message">
-        {message && `${message.from} [${message.dateTime}]: ${message.content}`}
+        {message && `${message.from} [${(message.dateTime as Date)}]: ${message.content}`}
     </div>
 );
 
