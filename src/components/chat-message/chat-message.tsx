@@ -1,4 +1,6 @@
 import React from 'react';
+
+import './chat-message.scss';
 import { ChatMessage } from '../../interfaces/messages';
 
 interface Props {

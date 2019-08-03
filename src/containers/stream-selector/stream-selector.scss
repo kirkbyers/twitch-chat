@@ -5,4 +5,13 @@
     .stream-list {
         display: flex;
     }
+    > * {
+        margin: 0 8px;
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
 }
