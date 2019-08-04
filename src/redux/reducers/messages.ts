@@ -27,6 +27,9 @@ export default function (state: MessageState = initState, action: MessageActions
             const newState = Object.assign({}, state);
             const newStreamMessagesId = newState.chatMessages.push([]) - 1;
             newState.chatMessagesByStream[action.payload] = newStreamMessagesId;
+            if (newState.chatMessages.length <= 1) {
+                newState.selectedStream = action.payload;
+            }
             return newState;
         }
         case 'SELECT_STREAM': {
@@ -34,6 +37,16 @@ export default function (state: MessageState = initState, action: MessageActions
                 ...state,
                 selectedStream: action.payload,
             }
+        }
+        case 'LEAVE_STREAM': {
+            const newState = Object.assign({}, state);
+            const streamMessagesId = newState.chatMessagesByStream[action.payload];
+            delete newState.chatMessages[streamMessagesId];
+            delete newState.chatMessagesByStream[action.payload];
+            if (newState.selectedStream === action.payload) {
+                newState.selectedStream = '';
+            }
+            return newState;
         }
         default:
             return state;

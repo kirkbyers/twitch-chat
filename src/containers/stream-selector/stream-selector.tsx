@@ -5,11 +5,12 @@ import { Button, Form, Input } from 'antd';
 import './stream-selector.scss';
 import { RootReducer } from '../../redux/reducers';
 import { getStreams, getSelectedStream } from '../../redux/selectors/messages';
-import { addStream, selectStream } from '../../redux/actions/messages';
+import { addStream, leaveStream, selectStream } from '../../redux/actions/messages';
 
 interface Props {
     streams: string[];
     onAddStream: (stream: string) => void;
+    onLeaveStream: (stream: string) => void;
     selectStream: (stream: string) => any;
     selectedStream: string;
 }
@@ -33,12 +34,16 @@ class StreamSelectorComponent extends React.Component<Props, State>{
 
     handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        this.props.onAddStream(this.state.newStream);
+        this.props.onAddStream(this.state.newStream.toLowerCase().trim());
         this.setState(() => ({ newStream: '' }));
     }
 
     handleStreamClick = (item: string) => (ev: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         this.props.selectStream(item);
+    }
+
+    handleLeaveStreamClick = (item: string) => (ev: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        this.props.onLeaveStream(item);
     }
 
     render() {
@@ -50,7 +55,10 @@ class StreamSelectorComponent extends React.Component<Props, State>{
                     <Button htmlType="submit" hidden={true}></Button>
                 </Form>
                 {this.props.streams.map((item, key) => (
-                    <Button key={key} shape="round" type={selectedStream === item ? 'default' : 'dashed'} onClick={this.handleStreamClick(item)}>{item}</Button>
+                    <Button.Group key={key}>
+                        <Button shape="round" type={selectedStream === item ? 'default' : 'dashed'} onClick={this.handleStreamClick(item)}>{item}</Button>
+                        <Button shape="round" type={selectedStream === item ? 'default' : 'dashed'} icon="close" onClick={this.handleLeaveStreamClick(item)} />
+                    </Button.Group>
                 ))}
             </div>
         );
@@ -66,6 +74,7 @@ const mapStateToProps = (state: RootReducer) => {
 
 const mapDispatchToProps = {
     onAddStream: addStream,
+    onLeaveStream: leaveStream,
     selectStream
 };
 
