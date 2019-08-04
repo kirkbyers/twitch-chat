@@ -1,12 +1,23 @@
-import { AnyAction } from "redux";
-import { UPDATE_USERNAME, UPDATE_OAUTHTOKEN } from "./actionTypes";
+export interface UpdateUsernameAction {
+    type: 'UPDATE_USERNAME';
+    payload: string;
+}
 
-export const updateUsername = (username: string): AnyAction => ({
-    type: UPDATE_USERNAME,
+export const updateUsername = (username: string): UpdateUsernameAction => ({
+    type: 'UPDATE_USERNAME',
     payload: username
 });
 
-export const updateOauthToken = (oauthToken: string): AnyAction => ({
-    type: UPDATE_OAUTHTOKEN,
+export interface UpdateOauthTokenAction {
+    type: 'UPDATE_OAUTHTOKEN';
+    payload: string;
+}
+
+export const updateOauthToken = (oauthToken: string): UpdateOauthTokenAction => ({
+    type: 'UPDATE_OAUTHTOKEN',
     payload: oauthToken
 });
+
+export type UserActions =
+    UpdateUsernameAction |
+    UpdateOauthTokenAction;

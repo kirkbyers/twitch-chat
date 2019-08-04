@@ -1,22 +1,40 @@
-import { ADD_MESSAGE, ADD_STREAM, SELECT_STREAM } from "./actionTypes";
-import { AnyAction } from "redux";
 import { ChatMessage } from "../../interfaces/messages";
 import twitchWebSocket from '../../shared/websockets';
 
-export const addMessage = (message: ChatMessage): AnyAction => ({
-    type: ADD_MESSAGE,
+export interface AddMessageAction {
+    type: 'ADD_MESSAGE';
+    payload: ChatMessage;
+}
+
+export const addMessage = (message: ChatMessage): AddMessageAction => ({
+    type: 'ADD_MESSAGE',
     payload: message
 });
 
-export const addStream = (stream: string): AnyAction => {
+export interface AddStreamAction {
+    type: 'ADD_STREAM';
+    payload: string;
+}
+
+export const addStream = (stream: string): AddStreamAction => {
     twitchWebSocket.joinChannel(stream);
     return {
-        type: ADD_STREAM,
-        payload: stream
+        type: 'ADD_STREAM',
+        payload: stream,
     }
 };
 
-export const selectStream = (stream: string): AnyAction => ({
-    type: SELECT_STREAM,
-    payload: stream
+export interface SelectStreamAction {
+    type: 'SELECT_STREAM';
+    payload: string;
+}
+
+export const selectStream = (stream: string): SelectStreamAction => ({
+    type: 'SELECT_STREAM',
+    payload: stream,
 });
+
+export type MessageActions =
+    AddMessageAction |
+    SelectStreamAction |
+    AddStreamAction;

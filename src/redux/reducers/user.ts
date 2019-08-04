@@ -1,5 +1,4 @@
-import { AnyAction } from "redux";
-import { UPDATE_USERNAME, UPDATE_OAUTHTOKEN } from "../actions/actionTypes";
+import { UserActions } from "../actions/user";
 
 export interface UserState {
     username: string;
@@ -11,16 +10,16 @@ const initState: UserState = {
     oauthToken: localStorage.getItem('userstore_oauthToken') || ''
 };
 
-export default function (state: UserState = initState, action: AnyAction): UserState {
+export default function (state: UserState = initState, action: UserActions): UserState {
     switch (action.type) {
-        case UPDATE_USERNAME: {
+        case 'UPDATE_USERNAME': {
             localStorage.setItem('userstore_username', action.payload);
             return {
                 ...state,
                 username: action.payload
             }
         }
-        case UPDATE_OAUTHTOKEN: {
+        case 'UPDATE_OAUTHTOKEN': {
             localStorage.setItem('userstore_oauthToken', action.payload)
             return {
                 ...state,

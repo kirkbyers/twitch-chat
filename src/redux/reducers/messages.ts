@@ -1,6 +1,5 @@
-import { ADD_MESSAGE, ADD_STREAM, SELECT_STREAM } from "../actions/actionTypes";
+import { MessageActions } from "../actions/messages";
 import { ChatMessage } from "../../interfaces/messages";
-import { AnyAction } from "redux";
 
 export interface MessageState {
     chatMessages: ChatMessage[][];
@@ -14,9 +13,9 @@ const initState: MessageState = {
     selectedStream: '',
 };
 
-export default function (state: MessageState = initState, action: AnyAction): MessageState {
+export default function (state: MessageState = initState, action: MessageActions): MessageState {
     switch (action.type) {
-        case ADD_MESSAGE: {
+        case 'ADD_MESSAGE': {
             const newMessage = action.payload as ChatMessage;
             const newChatMessages = state.chatMessages[state.chatMessagesByStream[newMessage.stream]].slice();
             newChatMessages.push(newMessage);
@@ -24,13 +23,13 @@ export default function (state: MessageState = initState, action: AnyAction): Me
             newState.chatMessages[state.chatMessagesByStream[newMessage.stream]] = newChatMessages;
             return newState;
         }
-        case ADD_STREAM: {
+        case 'ADD_STREAM': {
             const newState = Object.assign({}, state);
             const newStreamMessagesId = newState.chatMessages.push([]) - 1;
             newState.chatMessagesByStream[action.payload] = newStreamMessagesId;
             return newState;
         }
-        case SELECT_STREAM: {
+        case 'SELECT_STREAM': {
             return {
                 ...state,
                 selectedStream: action.payload,

@@ -7,4 +7,7 @@ export interface RootReducer {
     user: UserState;
 }
 
-export default combineReducers<RootReducer>({ messages, user });
+export default combineReducers<RootReducer>({
+    messages,
+    user,
+});
