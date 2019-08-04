@@ -29,6 +29,8 @@ interface State {
 
 class Chat extends React.Component<Props, State>{
     wsConn: TwitchWebSocket;
+    chatEnd: HTMLDivElement | null = null;
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -78,6 +80,13 @@ class Chat extends React.Component<Props, State>{
         this.dialTwitchWSS(username, oauthToken);
     }
 
+    componentDidUpdate() {
+        if (!this.chatEnd) {
+            return;
+        }
+        this.chatEnd.scrollIntoView({ behavior: 'smooth' });
+    }
+
     render() {
         return this.state.isLoggedIn ?
             (<Row type="flex" className="chat-messages" align="bottom" justify="center">
@@ -89,6 +98,9 @@ class Chat extends React.Component<Props, State>{
                                 <ChatMessageComponent message={message}></ChatMessageComponent>
                             </Col>
                         ))}
+                        <Col offset={0} span={24}>
+                            <div ref={(el) => { this.chatEnd = el; }}></div>
+                        </Col>
                     </Row>
                     <Row type="flex" className="chat-input">
                         <ChatInputComponent
