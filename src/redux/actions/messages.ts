@@ -1,5 +1,4 @@
 import { ChatMessage } from "../../interfaces/messages";
-import twitchWebSocket from '../../shared/websockets';
 
 export interface AddMessageAction {
     type: 'ADD_MESSAGE';
@@ -17,7 +16,6 @@ export interface AddStreamAction {
 };
 
 export const addStream = (stream: string): AddStreamAction => {
-    twitchWebSocket.joinChannel(stream);
     return {
         type: 'ADD_STREAM',
         payload: stream,
@@ -30,7 +28,6 @@ export interface LeaveStreamAction {
 };
 
 export const leaveStream = (stream: string): LeaveStreamAction => {
-    twitchWebSocket.leaveChannel(stream);
     return {
         type: 'LEAVE_STREAM',
         payload: stream,

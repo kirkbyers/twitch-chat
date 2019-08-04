@@ -20,6 +20,7 @@ interface Props {
     chatMessages: ChatMessage[];
     selectedStream: string;
     username: string;
+    initialState?: { [key: string]: any };
 }
 interface State {
     userInput: string;
@@ -33,15 +34,9 @@ class Chat extends React.Component<Props, State>{
         this.state = {
             userInput: '',
             isLoggedIn: false,
+            ...props.initialState
         };
         this.wsConn = twitchWebSocket;
-    }
-
-    componentWillUnmount = () => {
-        this.wsConn.close();
-        this.setState(() => ({
-            isLoggedIn: false
-        }))
     }
 
     dialTwitchWSS = (username: string, oauthToken: string) => {

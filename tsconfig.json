@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "rootDirs": [
+      "src",
+      "stories"
+    ],
     "target": "es5",
     "lib": [
       "dom",

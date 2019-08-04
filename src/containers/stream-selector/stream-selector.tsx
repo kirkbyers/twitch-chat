@@ -6,6 +6,7 @@ import './stream-selector.scss';
 import { RootReducer } from '../../redux/reducers';
 import { getStreams, getSelectedStream } from '../../redux/selectors/messages';
 import { addStream, leaveStream, selectStream } from '../../redux/actions/messages';
+import twitchWebSocket from '../../shared/websockets';
 
 interface Props {
     streams: string[];
@@ -34,7 +35,9 @@ class StreamSelectorComponent extends React.Component<Props, State>{
 
     handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        this.props.onAddStream(this.state.newStream.toLowerCase().trim());
+        const streamName = this.state.newStream.toLowerCase().trim();
+        twitchWebSocket.joinChannel(streamName);
+        this.props.onAddStream(streamName);
         this.setState(() => ({ newStream: '' }));
     }
 
@@ -43,6 +46,7 @@ class StreamSelectorComponent extends React.Component<Props, State>{
     }
 
     handleLeaveStreamClick = (item: string) => (ev: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        twitchWebSocket.leaveChannel(item);
         this.props.onLeaveStream(item);
     }
 
