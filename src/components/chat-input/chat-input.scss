@@ -1,5 +1,15 @@
 .input {
     display: flex;
+    > form {
+        flex: 1;
+        display: flex;
+        > *:first-child {
+            width: 100%;
+            > * {
+                width: 100%;
+            }
+        }
+    }
     &-field, &-button {
         display: inline-block;
     }

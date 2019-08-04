@@ -66,7 +66,7 @@ export class TwitchWebSocket {
     }
 
     messageChannel = (channel: string, message: string) => {
-        this.connection.send(`PRIVMSG #${channel}> :${message}`);
+        this.connection.send(`PRIVMSG #${channel} :${message}`);
     }
 
     close = () => {

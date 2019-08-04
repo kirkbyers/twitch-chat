@@ -4,7 +4,8 @@ import { AnyAction } from 'redux';
 import { Row, Col } from 'antd';
 
 import './chat.scss';
-import { getSelectedStreamMessages } from '../../redux/selectors/messages';
+import { getSelectedStreamMessages, getSelectedStream } from '../../redux/selectors/messages';
+import { getUsername } from '../../redux/selectors/user';
 import { ChatMessage } from '../../interfaces/messages';
 import { addMessage, } from '../../redux/actions/messages';
 import twitchWebSocket, { TwitchWebSocket } from '../../shared/websockets';
@@ -17,6 +18,8 @@ import { RootReducer } from '../../redux/reducers'
 interface Props {
     addMessage: (message: ChatMessage) => AnyAction;
     chatMessages: ChatMessage[];
+    selectedStream: string;
+    username: string;
 }
 interface State {
     userInput: string;
@@ -60,12 +63,17 @@ class Chat extends React.Component<Props, State>{
         });
     }
 
-    handleChatInputSubmit = () => {
+    handleChatInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!this.props.selectedStream) {
+            return;
+        }
+        this.wsConn.messageChannel(this.props.selectedStream, this.state.userInput);
         const newMessage: ChatMessage = {
             content: this.state.userInput,
             dateTime: new Date(),
-            from: 'You',
-            stream: 'This stream',
+            from: this.props.username,
+            stream: this.props.selectedStream,
         };
         this.props.addMessage(newMessage);
         this.setState(() => ({ userInput: '' }));
@@ -102,7 +110,9 @@ class Chat extends React.Component<Props, State>{
 
 const mapStateToProps = (state: RootReducer) => {
     const chatMessages = getSelectedStreamMessages(state);
-    return { chatMessages };
+    const selectedStream = getSelectedStream(state);
+    const username = getUsername(state);
+    return { chatMessages, selectedStream, username };
 }
 
 const mapDispatchToProps = {
