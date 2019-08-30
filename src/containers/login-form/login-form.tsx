@@ -1,35 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
-import { Button, Form, Input, Row, Col } from 'antd'
+import { Button, Form, Input, Row, Col, Checkbox } from 'antd'
 
 import './login-form.scss';
 import { RootReducer } from '../../redux/reducers';
-import { getUsername, getOauthToken } from '../../redux/selectors/user';
-import { updateUsername, updateOauthToken } from '../../redux/actions/user';
+import { getUsername, getOauthToken, getAutoLogin } from '../../redux/selectors/user';
+import { updateUsername, updateOauthToken, updateAutoLogin } from '../../redux/actions/user';
 
 
 interface Props {
     onSubmit: (username: string, oauthToken: string) => void;
     updateUsername: (username: string) => AnyAction;
     updateOauthToken: (token: string) => AnyAction;
+    updateAutoLogin: (autoLogin: boolean) => AnyAction;
     username: string;
     oauthToken: string;
+    autoLogin: boolean;
 }
 
 interface State { }
 
-const initState: State = {
-    username: '',
-    oauthToken: '',
-};
-
 class LoginFormContainer extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = initState;
+    componentDidMount() {
+        if (this.props.autoLogin) {
+            this.props.onSubmit(this.props.username, this.props.oauthToken);
+        }
     }
-    handleFormValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    handleFormValueUpdate = (e: React.ChangeEvent<HTMLInputElement> | any) => {
         if (!e.target) {
             return;
         }
@@ -40,6 +39,9 @@ class LoginFormContainer extends React.Component<Props, State> {
             case 'oauthToken':
                 this.props.updateOauthToken(e.target.value);
                 return;
+            case 'autoLogin':
+                this.props.updateAutoLogin(e.target.checked);
+                return;
             default:
                 console.error(`Input named "${e.target.name}" is not supported by the login form.`);
         }
@@ -48,7 +50,6 @@ class LoginFormContainer extends React.Component<Props, State> {
     handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         this.props.onSubmit(this.props.username, this.props.oauthToken);
-        this.setState(() => initState);
     }
 
     render() {
@@ -63,6 +64,9 @@ class LoginFormContainer extends React.Component<Props, State> {
                             <Input.Password size="large" type="password" name="oauthToken" value={this.props.oauthToken} onChange={this.handleFormValueUpdate} placeholder="OAuth Token" />
                         </Form.Item>
                         <Form.Item>
+                            <Checkbox checked={this.props.autoLogin} onChange={this.handleFormValueUpdate} name="autoLogin">Auto Login</Checkbox>
+                        </Form.Item>
+                        <Form.Item>
                             <Button type="primary" htmlType="submit">Login</Button>
                         </Form.Item>
                     </Form>
@@ -74,11 +78,13 @@ class LoginFormContainer extends React.Component<Props, State> {
 
 const mapStateToProps = (store: RootReducer) => ({
     username: getUsername(store),
-    oauthToken: getOauthToken(store)
+    oauthToken: getOauthToken(store),
+    autoLogin: getAutoLogin(store),
 });
 const mapDispatchToProps = {
     updateUsername,
-    updateOauthToken
+    updateOauthToken,
+    updateAutoLogin,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginFormContainer);

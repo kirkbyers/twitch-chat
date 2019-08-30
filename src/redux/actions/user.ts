@@ -18,6 +18,17 @@ export const updateOauthToken = (oauthToken: string): UpdateOauthTokenAction => 
     payload: oauthToken
 });
 
+export interface UpdateAutoLoginAction {
+    type: 'UPDATE_AUTOLOGIN';
+    payload: boolean;
+}
+
+export const updateAutoLogin = (autoLogin: boolean): UpdateAutoLoginAction => ({
+    type: 'UPDATE_AUTOLOGIN',
+    payload: autoLogin
+});
+
 export type UserActions =
     UpdateUsernameAction |
-    UpdateOauthTokenAction;
+    UpdateOauthTokenAction |
+    UpdateAutoLoginAction;
