@@ -1,4 +1,6 @@
-import { ChatMessage } from "../../interfaces/messages";
+import { ChatMessage, ChatMessagesStats } from "../../interfaces/messages";
+import { Dispatch, Store } from "redux";
+import { RootReducer } from "../reducers/index";
 
 export interface AddMessageAction {
     type: 'ADD_MESSAGE';
@@ -44,7 +46,52 @@ export const selectStream = (stream: string): SelectStreamAction => ({
     payload: stream,
 });
 
+export interface UpdateMessagesStatsAction {
+    type: 'UPDATE_MESSAGES_STATS';
+    payload: {
+        stream: string;
+        stats: ChatMessagesStats;
+    };
+}
+
+export const updateMessagesStats = (stream: string, streamMessagesStats: UpdateMessagesStatsAction) => ({
+    type: 'UPDATE_MESSAGES_STATS',
+    payload: {
+        stream,
+        stats: streamMessagesStats,
+    }
+});
+
+export interface AddMessagesStatsIntervalAction {
+    type: 'ADD_MESSAGES_STATS_INTERVAL';
+    payload: {
+        stream: string;
+        interval: NodeJS.Timeout;
+    };
+}
+
+export const addMessagesStatsInterval = (stream: string, interval: NodeJS.Timeout) => ({
+    type: 'ADD_MESSAGES_STATS_INTERVAL',
+    payload: {
+        stream,
+        interval,
+    }
+});
+
+export interface RemoveMessagesStatsIntervalAction {
+    type: 'REMOVE_MESSAGES_STATS_INTERVAL';
+    payload: string;
+}
+
+export const RemoveMessagesStatsInterval = (stream: string) => ({
+    type: 'REMOVE_MESSAGES_STATS_INTERVAL',
+    payload: stream,
+});
+
 export type MessageActions =
+    RemoveMessagesStatsIntervalAction |
+    AddMessagesStatsIntervalAction |
+    UpdateMessagesStatsAction |
     LeaveStreamAction |
     AddMessageAction |
     SelectStreamAction |
