@@ -17,7 +17,7 @@ storiesOf('ChatComponent', module)
         </Provider>
     ))
     .add('with a few messages', () => {
-        store.dispatch(addStream('test-stream'));
+        addStream('test-stream');
         store.dispatch(selectStream('test-stream'));
         for (let i = 0; i < 5; i++) {
             store.dispatch(addMessage({
@@ -34,7 +34,7 @@ storiesOf('ChatComponent', module)
         )
     })
     .add('with a lot of messages', () => {
-        store.dispatch(addStream('test-stream'));
+        addStream('test-stream');
         store.dispatch(selectStream('test-stream'));
         const addMessages = (counter: number = 0) => {
             store.dispatch(addMessage({

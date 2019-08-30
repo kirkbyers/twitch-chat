@@ -1,5 +1,5 @@
 import { ChatMessage, ChatMessagesStats } from "../../interfaces/messages";
-import { Dispatch, Store } from "redux";
+import { Dispatch } from "redux";
 import { RootReducer } from "../reducers/index";
 
 export interface AddMessageAction {
@@ -17,11 +17,19 @@ export interface AddStreamAction {
     payload: string;
 };
 
-export const addStream = (stream: string): AddStreamAction => {
-    return {
-        type: 'ADD_STREAM',
-        payload: stream,
-    }
+export const addStream = (stream: string): (d: Dispatch, s: () => RootReducer) => void => {
+    return (dispatch, getState) => {
+        dispatch({ type: 'ADD_STREAM', payload: stream });
+        const statsInterval = setInterval(() => {
+        }, 1000);
+        dispatch({
+            type: 'ADD_MESSAGES_STATS_INTERVAL',
+            payload: {
+                stream,
+                interval: statsInterval,
+            }
+        });
+    };
 };
 
 export interface LeaveStreamAction {

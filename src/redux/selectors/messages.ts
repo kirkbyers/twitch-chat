@@ -1,16 +1,18 @@
 import { RootReducer } from "../reducers";
+import { createSelector } from "reselect";
 
 export const getMessagesState = (store: RootReducer) => store.messages;
-export const getChatMessages = (store: RootReducer) => getMessagesState(store).chatMessages;
-export const getStreams = (store: RootReducer) => Object.keys(getMessagesState(store).chatMessagesByStream);
-export const getSelectedStream = (store: RootReducer) => getMessagesState(store).selectedStream;
-export const getSelectedStreamId = (store: RootReducer) => {
-    const selectedStream = getSelectedStream(store);
+export const getChatMessages = createSelector(getMessagesState, (messageState) => messageState.chatMessages);
+export const getStreams = createSelector(getMessagesState, (messageState) => Object.keys(messageState.chatMessagesByStream));
+export const getSelectedStream = createSelector(getMessagesState, (messageState) => messageState.selectedStream);
+export const getSelectedStreamId = createSelector(getMessagesState, getSelectedStream, (messageState, selectedStream) => {
     if (!selectedStream) {
         return -1;
     }
-    return getMessagesState(store).chatMessagesByStream[selectedStream];
-}
+    return messageState.chatMessagesByStream[selectedStream];
+});
+
+// Dont memoize getSelectedStreamMessages
 export const getSelectedStreamMessages = (store: RootReducer) => {
     const selectedStreamID = getSelectedStreamId(store);
     if (selectedStreamID < 0) {
