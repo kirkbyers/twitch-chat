@@ -39,6 +39,9 @@ class StreamSelectorComponent extends React.Component<Props, State>{
         twitchWebSocket.joinChannel(streamName);
         this.props.onAddStream(streamName);
         this.setState(() => ({ newStream: '' }));
+        if (!this.props.selectedStream) {
+            this.props.selectStream(streamName);
+        }
     }
 
     handleStreamClick = (item: string) => (ev: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
