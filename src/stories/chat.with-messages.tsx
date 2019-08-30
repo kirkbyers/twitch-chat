@@ -20,12 +20,12 @@ storiesOf('ChatComponent', module)
         addStream('test-stream');
         store.dispatch(selectStream('test-stream'));
         for (let i = 0; i < 5; i++) {
-            store.dispatch(addMessage({
+            addMessage({
                 content: `Test message ${i}.`,
                 dateTime: new Date(),
                 from: 'storybook',
                 stream: 'test-stream'
-            }));
+            });
         }
         return (
             <Provider store={store}>
@@ -37,12 +37,12 @@ storiesOf('ChatComponent', module)
         addStream('test-stream');
         store.dispatch(selectStream('test-stream'));
         const addMessages = (counter: number = 0) => {
-            store.dispatch(addMessage({
+            addMessage({
                 content: `Test message ${counter}.`,
                 dateTime: new Date(),
                 from: 'storybook',
                 stream: 'test-stream'
-            }));
+            });
             counter++;
             setTimeout(() => addMessages(counter), 500);
         }

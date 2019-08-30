@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
 import { Row, Col } from 'antd';
 
 import './chat.scss';
@@ -16,7 +15,7 @@ import LoginFormContainter from '../login-form/login-form';
 import { RootReducer } from '../../redux/reducers'
 
 interface Props {
-    addMessage: (message: ChatMessage) => AnyAction;
+    addMessage: (message: ChatMessage) => void;
     chatMessages: ChatMessage[];
     selectedStream: string;
     username: string;

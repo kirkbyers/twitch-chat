@@ -1,16 +1,28 @@
 import { ChatMessage, ChatMessagesStats } from "../../interfaces/messages";
 import { Dispatch } from "redux";
 import { RootReducer } from "../reducers/index";
+import { getMessagesState } from "../selectors/messages";
 
 export interface AddMessageAction {
     type: 'ADD_MESSAGE';
     payload: ChatMessage;
 };
 
-export const addMessage = (message: ChatMessage): AddMessageAction => ({
-    type: 'ADD_MESSAGE',
-    payload: message
-});
+export const addMessage = (message: ChatMessage): (d: Dispatch, s: () => RootReducer) => void => {
+    return (dispatch, getState) => {
+        dispatch({ type: 'ADD_MESSAGE', payload: message });
+        const { chatMessagesByStream, chatMessagesStats } = getMessagesState(getState());
+        const streamId = chatMessagesByStream[message.stream];
+        const oldStats = chatMessagesStats[streamId] || {
+            messagesPerS: 0,
+            messagesPerSOver10: [],
+            messagesPerSOver10Avg: 0
+        };
+        const newStats = Object.assign({}, oldStats);
+        newStats.messagesPerS++;
+        dispatch(updateMessagesStats(message.stream, newStats));
+    }
+};
 
 export interface AddStreamAction {
     type: 'ADD_STREAM';
@@ -21,6 +33,22 @@ export const addStream = (stream: string): (d: Dispatch, s: () => RootReducer) =
     return (dispatch, getState) => {
         dispatch({ type: 'ADD_STREAM', payload: stream });
         const statsInterval = setInterval(() => {
+            const { chatMessagesByStream, chatMessagesStats } = getMessagesState(getState());
+            const streamId = chatMessagesByStream[stream];
+            const oldStats = chatMessagesStats[streamId] || {
+                messagesPerS: 0,
+                messagesPerSOver10: [],
+                messagesPerSOver10Avg: 0
+            };
+            const newStats = Object.assign({}, oldStats);
+            newStats.messagesPerS = 0;
+            newStats.messagesPerSOver10.push(oldStats.messagesPerS);
+            if (newStats.messagesPerSOver10.length > 10) {
+                const removedMetrics = newStats.messagesPerSOver10.splice(0, 1);
+                newStats.messagesPerSOver10Avg -= removedMetrics[0] / 10;
+            }
+            newStats.messagesPerSOver10Avg += oldStats.messagesPerS / 10
+            dispatch(updateMessagesStats(stream, newStats));
         }, 1000);
         dispatch({
             type: 'ADD_MESSAGES_STATS_INTERVAL',
@@ -62,7 +90,7 @@ export interface UpdateMessagesStatsAction {
     };
 }
 
-export const updateMessagesStats = (stream: string, streamMessagesStats: UpdateMessagesStatsAction) => ({
+export const updateMessagesStats = (stream: string, streamMessagesStats: ChatMessagesStats) => ({
     type: 'UPDATE_MESSAGES_STATS',
     payload: {
         stream,

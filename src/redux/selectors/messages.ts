@@ -20,3 +20,6 @@ export const getSelectedStreamMessages = (store: RootReducer) => {
     }
     return getChatMessages(store)[selectedStreamID];
 }
+
+export const getChatMessagesStats = createSelector(getMessagesState, (messagesState) => messagesState.chatMessagesStats);
+export const getChatMessagesStatsIntervals = createSelector(getMessagesState, (messsagesState) => messsagesState.chatMessagesStatsIntervals);
