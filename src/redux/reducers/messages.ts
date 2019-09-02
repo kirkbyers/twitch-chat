@@ -9,12 +9,29 @@ export interface MessageState {
     selectedStream: string;
 }
 
+const loadLocalStorageStreams = (): { [stream: string]: number } => {
+    const localStorageStreams = localStorage.getItem('messages_streams') || '[]';
+    const streamsArray: string[] = JSON.parse(localStorageStreams);
+    return streamsArray.reduce((result: { [stream: string]: number }, stream, index) => {
+        result[stream] = index;
+        return result;
+    }, {});
+}
+
+const saveStreamLocalStorage = (inp: { [stream: string]: number }): void => {
+    const streamsArray = Object.keys(inp);
+    localStorage.setItem('messages_streams', JSON.stringify(streamsArray));
+}
+
+const savedStreams = loadLocalStorageStreams();
+const savedStreamMessage = Object.keys(savedStreams).map(() => []);
+
 const initState: MessageState = {
-    chatMessages: [[]],
+    chatMessages: savedStreamMessage.slice(),
     chatMessagesStats: [],
     chatMessagesStatsIntervals: [],
-    chatMessagesByStream: {},
-    selectedStream: '',
+    chatMessagesByStream: savedStreams,
+    selectedStream: localStorage.getItem('messages_selectedStream') || '',
 };
 
 export default function (state: MessageState = initState, action: MessageActions): MessageState {
@@ -34,9 +51,11 @@ export default function (state: MessageState = initState, action: MessageActions
             if (newState.chatMessages.length <= 1) {
                 newState.selectedStream = action.payload;
             }
+            saveStreamLocalStorage(newState.chatMessagesByStream);
             return newState;
         }
         case 'SELECT_STREAM': {
+            localStorage.setItem('messages_selectedStream', action.payload);
             return {
                 ...state,
                 selectedStream: action.payload,
@@ -53,6 +72,7 @@ export default function (state: MessageState = initState, action: MessageActions
             delete newState.chatMessagesStats[streamMessagesId];
             clearInterval(newState.chatMessagesStatsIntervals[streamMessagesId]);
             delete newState.chatMessagesStatsIntervals[streamMessagesId];
+            saveStreamLocalStorage(newState.chatMessagesByStream);
             return newState;
         }
         case 'UPDATE_MESSAGES_STATS': {

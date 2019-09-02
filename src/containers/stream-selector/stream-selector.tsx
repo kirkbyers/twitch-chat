@@ -28,6 +28,14 @@ class StreamSelectorComponent extends React.Component<Props, State>{
         };
     }
 
+    componentDidMount() {
+        if (this.props.streams) {
+            for (const stream of this.props.streams) {
+                twitchWebSocket.joinChannel(stream);
+            }
+        }
+    }
+
     handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newStream = e.target.value;
         this.setState(() => ({ newStream }));
