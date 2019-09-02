@@ -4,9 +4,10 @@ import { Row, Col } from 'antd';
 
 import './chat.scss';
 import { getSelectedStreamMessages, getSelectedStream } from '../../redux/selectors/messages';
-import { getUsername } from '../../redux/selectors/user';
+import { getUsername, getIsLoggedIn } from '../../redux/selectors/user';
 import { ChatMessage } from '../../interfaces/messages';
-import { addMessage, } from '../../redux/actions/messages';
+import { addMessage } from '../../redux/actions/messages';
+import { setIsLoggedIn } from '../../redux/actions/user';
 import twitchWebSocket, { TwitchWebSocket } from '../../shared/websockets';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
@@ -16,14 +17,15 @@ import { RootReducer } from '../../redux/reducers'
 
 interface Props {
     addMessage: (message: ChatMessage) => void;
+    setIsLoggedIn: (isLoggedIn: boolean) => void;
     chatMessages: ChatMessage[];
     selectedStream: string;
     username: string;
+    isLoggedIn: boolean;
     initialState?: { [key: string]: any };
 }
 interface State {
     userInput: string;
-    isLoggedIn: boolean;
 }
 
 class Chat extends React.Component<Props, State>{
@@ -34,7 +36,6 @@ class Chat extends React.Component<Props, State>{
         super(props);
         this.state = {
             userInput: '',
-            isLoggedIn: false,
             ...props.initialState
         };
         this.wsConn = twitchWebSocket;
@@ -43,7 +44,7 @@ class Chat extends React.Component<Props, State>{
     dialTwitchWSS = (username: string, oauthToken: string) => {
         this.wsConn.dial().then(() => {
             this.wsConn.signIn(username, oauthToken);
-            this.setState(() => ({ isLoggedIn: true }));
+            this.props.setIsLoggedIn(true);
             this.wsConn.connection.addEventListener('message', (event) => {
                 this.wsConn.parseWSMessage(event).forEach((message) => {
                     if (!!message) {
@@ -53,7 +54,7 @@ class Chat extends React.Component<Props, State>{
                 this.wsConn.connection.addEventListener('close', (e) => {
                     // TODO: close/retry handler
                     console.log(e);
-                    this.setState(() => ({ isLoggedIn: false }));
+                    this.props.setIsLoggedIn(false);
                 });
             });
         });
@@ -87,7 +88,7 @@ class Chat extends React.Component<Props, State>{
     }
 
     render() {
-        return this.state.isLoggedIn ?
+        return this.props.isLoggedIn ?
             (<Row type="flex" className="chat-messages" align="bottom" justify="center">
                 <Col span={18}>
                     <StreamSelectorComponent></StreamSelectorComponent>
@@ -118,11 +119,13 @@ const mapStateToProps = (state: RootReducer) => {
     const chatMessages = getSelectedStreamMessages(state);
     const selectedStream = getSelectedStream(state);
     const username = getUsername(state);
-    return { chatMessages, selectedStream, username };
+    const isLoggedIn = getIsLoggedIn(state);
+    return { chatMessages, selectedStream, username, isLoggedIn };
 }
 
 const mapDispatchToProps = {
-    addMessage
+    addMessage,
+    setIsLoggedIn,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

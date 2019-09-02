@@ -4,12 +4,14 @@ export interface UserState {
     username: string;
     oauthToken: string;
     autoLogin: boolean;
+    isLoggedIn: boolean;
 }
 
 const initState: UserState = {
     username: localStorage.getItem('userstore_username') || '',
     oauthToken: localStorage.getItem('userstore_oauthToken') || '',
     autoLogin: localStorage.getItem('userstore_autoLogin') === 'true' || false,
+    isLoggedIn: false,
 };
 
 export default function (state: UserState = initState, action: UserActions): UserState {
@@ -33,6 +35,12 @@ export default function (state: UserState = initState, action: UserActions): Use
             return {
                 ...state,
                 autoLogin: action.payload
+            }
+        }
+        case 'SET_IS_LOGGED_IN': {
+            return {
+                ...state,
+                isLoggedIn: action.payload,
             }
         }
         default:

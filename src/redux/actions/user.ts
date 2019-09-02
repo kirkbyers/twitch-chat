@@ -28,7 +28,18 @@ export const updateAutoLogin = (autoLogin: boolean): UpdateAutoLoginAction => ({
     payload: autoLogin
 });
 
+export interface SetIsLoggedInAction {
+    type: 'SET_IS_LOGGED_IN';
+    payload: boolean;
+}
+
+export const setIsLoggedIn = (isLoggedIn: boolean): SetIsLoggedInAction => ({
+    type: 'SET_IS_LOGGED_IN',
+    payload: isLoggedIn,
+});
+
 export type UserActions =
+    SetIsLoggedInAction |
     UpdateUsernameAction |
     UpdateOauthTokenAction |
     UpdateAutoLoginAction;
