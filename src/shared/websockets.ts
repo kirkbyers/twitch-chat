@@ -70,7 +70,7 @@ export class TwitchWebSocket {
     }
 
     close = () => {
-        this.connection.close(200, 'end connection');
+        this.connection.close();
     }
 }
 

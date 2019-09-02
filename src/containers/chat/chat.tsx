@@ -12,6 +12,7 @@ import twitchWebSocket, { TwitchWebSocket } from '../../shared/websockets';
 import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
 import StreamSelectorComponent from '../stream-selector/stream-selector';
+import LoggoutButton from '../logout/logout';
 import LoginFormContainter from '../login-form/login-form';
 import { RootReducer } from '../../redux/reducers'
 
@@ -91,7 +92,14 @@ class Chat extends React.Component<Props, State>{
         return this.props.isLoggedIn ?
             (<Row type="flex" className="chat-messages" align="bottom" justify="center">
                 <Col span={18}>
-                    <StreamSelectorComponent></StreamSelectorComponent>
+                    <Row>
+                        <Col span={20}>
+                            <StreamSelectorComponent></StreamSelectorComponent>
+                        </Col>
+                        <Col span={4}>
+                            <LoggoutButton></LoggoutButton>
+                        </Col>
+                    </Row>
                     <Row className="chat" align="bottom" justify="start">
                         {this.props.chatMessages.length > 0 && this.props.chatMessages.map((message, index) => (
                             <Col key={index} offset={0} span={24}>
