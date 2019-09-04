@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
 
 import './chat.scss';
-import { getSelectedStreamMessages, getSelectedStream } from '../../redux/selectors/messages';
+import { getSelectedStreamMessages, getSelectedStream, getSelectedStreamChatMessagesStats, getSelectedStreamMessagesPerSOver10 } from '../../redux/selectors/messages';
 import { getUsername, getIsLoggedIn } from '../../redux/selectors/user';
-import { ChatMessage } from '../../interfaces/messages';
+import { ChatMessage, ChatMessagesStats } from '../../interfaces/messages';
 import { addMessage } from '../../redux/actions/messages';
 import { setIsLoggedIn } from '../../redux/actions/user';
 import twitchWebSocket, { TwitchWebSocket } from '../../shared/websockets';
@@ -15,11 +15,14 @@ import StreamSelectorComponent from '../stream-selector/stream-selector';
 import LoggoutButton from '../logout/logout';
 import LoginFormContainter from '../login-form/login-form';
 import { RootReducer } from '../../redux/reducers'
+import ChatRateChart from '../../components/chat-rate-chart/chat-rate-chart';
 
 interface Props {
     addMessage: (message: ChatMessage) => void;
     setIsLoggedIn: (isLoggedIn: boolean) => void;
     chatMessages: ChatMessage[];
+    selectedChatStats: ChatMessagesStats;
+    selectedChatMessagesPerSOver10: number[];
     selectedStream: string;
     username: string;
     isLoggedIn: boolean;
@@ -91,7 +94,7 @@ class Chat extends React.Component<Props, State>{
     render() {
         return this.props.isLoggedIn ?
             (<Row type="flex" className="chat-messages" align="bottom" justify="center">
-                <Col span={18}>
+                <Col span={16}>
                     <Row>
                         <Col span={20}>
                             <StreamSelectorComponent></StreamSelectorComponent>
@@ -118,6 +121,9 @@ class Chat extends React.Component<Props, State>{
                         ></ChatInputComponent>
                     </Row>
                 </Col>
+                <Col span={8}>
+                    <ChatRateChart data={this.props.selectedChatMessagesPerSOver10}></ChatRateChart>
+                </Col>
             </Row>) :
             (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
     }
@@ -128,7 +134,9 @@ const mapStateToProps = (state: RootReducer) => {
     const selectedStream = getSelectedStream(state);
     const username = getUsername(state);
     const isLoggedIn = getIsLoggedIn(state);
-    return { chatMessages, selectedStream, username, isLoggedIn };
+    const selectedChatStats = getSelectedStreamChatMessagesStats(state);
+    const selectedChatMessagesPerSOver10 = getSelectedStreamMessagesPerSOver10(state);
+    return { chatMessages, selectedStream, username, isLoggedIn, selectedChatStats, selectedChatMessagesPerSOver10 };
 }
 
 const mapDispatchToProps = {

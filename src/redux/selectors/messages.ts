@@ -22,4 +22,19 @@ export const getSelectedStreamMessages = (store: RootReducer) => {
 }
 
 export const getChatMessagesStats = createSelector(getMessagesState, (messagesState) => messagesState.chatMessagesStats);
+
+// Dont memoize getSelectedStreamChatMessagesStats
+export const getSelectedStreamChatMessagesStats = (store: RootReducer) => {
+    const defaultStats = {
+        messagesPerS: 0,
+        messagesPerSOver10: [],
+        messagesPerSOver10Avg: 0
+    };
+    const selectedStreamID = getSelectedStreamId(store);
+    if (selectedStreamID < 0) {
+        return defaultStats;
+    }
+    return getChatMessagesStats(store)[selectedStreamID] || defaultStats;
+}
+export const getSelectedStreamMessagesPerSOver10 = createSelector(getSelectedStreamChatMessagesStats, (stats) => stats.messagesPerSOver10);
 export const getChatMessagesStatsIntervals = createSelector(getMessagesState, (messsagesState) => messsagesState.chatMessagesStatsIntervals);

@@ -20,6 +20,11 @@ interface State {
     newStream: string;
 }
 
+const loadLocalStorageStreams = (): string[] => {
+    const localStorageStreams = localStorage.getItem('messages_streams') || '[]';
+    return JSON.parse(localStorageStreams);
+}
+
 class StreamSelectorComponent extends React.Component<Props, State>{
     constructor(props: Props) {
         super(props);
@@ -29,9 +34,17 @@ class StreamSelectorComponent extends React.Component<Props, State>{
     }
 
     componentDidMount() {
-        if (this.props.streams) {
-            for (const stream of this.props.streams) {
+        if (this.props.streams.length === 0) {
+            const localStream = loadLocalStorageStreams();
+            for (const stream of localStream) {
                 twitchWebSocket.joinChannel(stream);
+                this.props.onAddStream(stream);
+            }
+        }
+        if (!this.props.selectedStream) {
+            const storedSelectedStream = localStorage.getItem('messages_selectedStream');
+            if (!!storedSelectedStream) {
+                this.props.selectStream(storedSelectedStream);
             }
         }
     }

@@ -9,29 +9,17 @@ export interface MessageState {
     selectedStream: string;
 }
 
-const loadLocalStorageStreams = (): { [stream: string]: number } => {
-    const localStorageStreams = localStorage.getItem('messages_streams') || '[]';
-    const streamsArray: string[] = JSON.parse(localStorageStreams);
-    return streamsArray.reduce((result: { [stream: string]: number }, stream, index) => {
-        result[stream] = index;
-        return result;
-    }, {});
-}
-
 const saveStreamLocalStorage = (inp: { [stream: string]: number }): void => {
     const streamsArray = Object.keys(inp);
     localStorage.setItem('messages_streams', JSON.stringify(streamsArray));
 }
 
-const savedStreams = loadLocalStorageStreams();
-const savedStreamMessage = Object.keys(savedStreams).map(() => []);
-
 const initState: MessageState = {
-    chatMessages: savedStreamMessage.slice(),
+    chatMessages: [[]],
     chatMessagesStats: [],
     chatMessagesStatsIntervals: [],
-    chatMessagesByStream: savedStreams,
-    selectedStream: localStorage.getItem('messages_selectedStream') || '',
+    chatMessagesByStream: {},
+    selectedStream: '',
 };
 
 export default function (state: MessageState = initState, action: MessageActions): MessageState {
