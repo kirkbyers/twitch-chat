@@ -18,7 +18,11 @@ export const getSelectedStreamMessages = (store: RootReducer) => {
     if (selectedStreamID < 0) {
         return [];
     }
-    return getChatMessages(store)[selectedStreamID];
+    const selectedStreamMessages = getChatMessages(store)[selectedStreamID];
+    if (selectedStreamMessages.length < 100) {
+        return selectedStreamMessages;
+    }
+    return selectedStreamMessages.slice(selectedStreamMessages.length - 101, selectedStreamMessages.length);
 }
 
 export const getChatMessagesStats = createSelector(getMessagesState, (messagesState) => messagesState.chatMessagesStats);
