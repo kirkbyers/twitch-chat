@@ -16,6 +16,7 @@ import LoggoutButton from '../logout/logout';
 import LoginFormContainter from '../login-form/login-form';
 import { RootReducer } from '../../redux/reducers'
 import ChatRateChart from '../../components/chat-rate-chart/chat-rate-chart';
+import ChatStats from '../../components/chat-stats/chat-stats';
 
 interface Props {
     addMessage: (message: ChatMessage) => void;
@@ -121,8 +122,9 @@ class Chat extends React.Component<Props, State>{
                         ></ChatInputComponent>
                     </Row>
                 </Col>
-                <Col span={8}>
+                <Col span={8} className="chat-stats-meta">
                     <ChatRateChart data={this.props.selectedChatMessagesPerSOver10}></ChatRateChart>
+                    <ChatStats averageOver10s={this.props.selectedChatStats.messagesPerSOver10Avg}></ChatStats>
                 </Col>
             </Row>) :
             (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)
