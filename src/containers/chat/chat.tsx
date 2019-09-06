@@ -124,7 +124,7 @@ class Chat extends React.Component<Props, State>{
                 </Col>
                 <Col span={8} className="chat-stats-meta">
                     <ChatRateChart data={this.props.selectedChatMessagesPerSOver10}></ChatRateChart>
-                    <ChatStats averageOver10s={this.props.selectedChatStats.messagesPerSOver10Avg}></ChatStats>
+                    <ChatStats averageOver10s={this.props.selectedChatStats.messagesPerSOver10Avg} averageOver120s={this.props.selectedChatStats.messagesPerSOver120Avg}></ChatStats>
                 </Col>
             </Row>) :
             (<LoginFormContainter onSubmit={this.handleLoginSubmit}></LoginFormContainter>)

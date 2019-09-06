@@ -16,7 +16,10 @@ export const addMessage = (message: ChatMessage): (d: Dispatch, s: () => RootRed
         const oldStats = chatMessagesStats[streamId] || {
             messagesPerS: 0,
             messagesPerSOver10: [],
-            messagesPerSOver10Avg: 0
+            messagesPerSOver10Avg: 0,
+            messagesPerSOver120: [],
+            messagesPerSOver120Avg: 0,
+            messagesPerSOver120StdDev: 0,
         };
         const newStats = Object.assign({}, oldStats);
         newStats.messagesPerS++;
@@ -38,16 +41,25 @@ export const addStream = (stream: string): (d: Dispatch, s: () => RootReducer) =
             const oldStats = chatMessagesStats[streamId] || {
                 messagesPerS: 0,
                 messagesPerSOver10: [],
-                messagesPerSOver10Avg: 0
+                messagesPerSOver10Avg: 0,
+                messagesPerSOver120: [],
+                messagesPerSOver120Avg: 0,
+                messagesPerSOver120StdDev: 0,
             };
             const newStats = Object.assign({}, oldStats);
             newStats.messagesPerS = 0;
             newStats.messagesPerSOver10.push(oldStats.messagesPerS);
+            newStats.messagesPerSOver120.push(oldStats.messagesPerS);
             if (newStats.messagesPerSOver10.length > 10) {
                 const removedMetrics = newStats.messagesPerSOver10.splice(0, 1);
                 newStats.messagesPerSOver10Avg -= removedMetrics[0] / 10;
             }
-            newStats.messagesPerSOver10Avg += oldStats.messagesPerS / 10
+            if (newStats.messagesPerSOver120.length > 120) {
+                const removedMetricPer120 = newStats.messagesPerSOver120.splice(0, 1);
+                newStats.messagesPerSOver120Avg -= removedMetricPer120[0] / 120;
+            }
+            newStats.messagesPerSOver10Avg += oldStats.messagesPerS / 10;
+            newStats.messagesPerSOver120Avg += oldStats.messagesPerS / 120;
             dispatch(updateMessagesStats(stream, newStats));
         }, 1000);
         dispatch({

@@ -22,7 +22,7 @@ export const getSelectedStreamMessages = (store: RootReducer) => {
     if (selectedStreamMessages.length < 100) {
         return selectedStreamMessages;
     }
-    return selectedStreamMessages.slice(selectedStreamMessages.length - 101, selectedStreamMessages.length);
+    return selectedStreamMessages.slice(selectedStreamMessages.length - 100);
 }
 
 export const getChatMessagesStats = createSelector(getMessagesState, (messagesState) => messagesState.chatMessagesStats);
@@ -32,7 +32,10 @@ export const getSelectedStreamChatMessagesStats = (store: RootReducer) => {
     const defaultStats = {
         messagesPerS: 0,
         messagesPerSOver10: [],
-        messagesPerSOver10Avg: 0
+        messagesPerSOver10Avg: 0,
+        messagesPerSOver120: [],
+        messagesPerSOver120Avg: 0,
+        messagesPerSOver120StdDev: 0,
     };
     const selectedStreamID = getSelectedStreamId(store);
     if (selectedStreamID < 0) {
