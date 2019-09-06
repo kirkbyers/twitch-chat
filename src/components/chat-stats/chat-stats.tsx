@@ -8,9 +8,10 @@ const { Title } = Typography;
 interface Props {
     averageOver10s: number;
     averageOver120s: number;
+    stdDev: number
 }
 
-const ChatStatsComponent: React.SFC<Props> = ({ averageOver10s = 0, averageOver120s = 0 }) => {
+const ChatStatsComponent: React.SFC<Props> = ({ averageOver10s = 0, averageOver120s = 0, stdDev = 0 }) => {
     return (
         <Row className="chat-stats">
             <Col>
@@ -21,6 +22,10 @@ const ChatStatsComponent: React.SFC<Props> = ({ averageOver10s = 0, averageOver1
                 <Title level={3}>Messages Per Second Average Over 120s</Title>
                 <Title level={4}>{averageOver120s.toFixed(1)}</Title>
             </Col>
+            {stdDev > 0 && <Col>
+                <Title level={3}>Standard Deviation</Title>
+                <Title level={4}>{stdDev.toFixed(1)}</Title>
+            </Col>}
         </Row>
     )
 }

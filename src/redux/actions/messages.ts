@@ -2,6 +2,7 @@ import { ChatMessage, ChatMessagesStats } from "../../interfaces/messages";
 import { Dispatch } from "redux";
 import { RootReducer } from "../reducers/index";
 import { getMessagesState } from "../selectors/messages";
+import { calculateStdDev } from "../../shared/std-dev";
 
 export interface AddMessageAction {
     type: 'ADD_MESSAGE';
@@ -57,6 +58,10 @@ export const addStream = (stream: string): (d: Dispatch, s: () => RootReducer) =
             if (newStats.messagesPerSOver120.length > 120) {
                 const removedMetricPer120 = newStats.messagesPerSOver120.splice(0, 1);
                 newStats.messagesPerSOver120Avg -= removedMetricPer120[0] / 120;
+                newStats.messagesPerSOver120StdDev = calculateStdDev(newStats.messagesPerSOver120);
+                if (newStats.messagesPerS > (newStats.messagesPerSOver120Avg + (2 * newStats.messagesPerSOver120StdDev))) {
+                    console.log('Psudo anomaly at', new Date());
+                }
             }
             newStats.messagesPerSOver10Avg += oldStats.messagesPerS / 10;
             newStats.messagesPerSOver120Avg += oldStats.messagesPerS / 120;
