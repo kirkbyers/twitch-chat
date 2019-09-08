@@ -59,9 +59,10 @@ export const addStream = (stream: string): (d: Dispatch, s: () => RootReducer) =
                 const removedMetricPer120 = newStats.messagesPerSOver120.splice(0, 1);
                 newStats.messagesPerSOver120Avg -= removedMetricPer120[0] / 120;
                 newStats.messagesPerSOver120StdDev = calculateStdDev(newStats.messagesPerSOver120);
-                if (newStats.messagesPerS > (newStats.messagesPerSOver120Avg + (2 * newStats.messagesPerSOver120StdDev))) {
-                    console.log('Psudo anomaly at', new Date());
-                }
+                // TODO: Inteligent anomaly detection here
+                // if (oldStats.messagesPerS > (oldStats.messagesPerSOver120Avg + (2 * oldStats.messagesPerSOver120StdDev))) {
+                //     console.log('Psudo anomaly at', stream, new Date());
+                // }
             }
             newStats.messagesPerSOver10Avg += oldStats.messagesPerS / 10;
             newStats.messagesPerSOver120Avg += oldStats.messagesPerS / 120;
