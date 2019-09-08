@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
 
 import './chat.scss';
-import { getSelectedStreamMessages, getSelectedStream, getSelectedStreamChatMessagesStats, getSelectedStreamMessagesPerSOver10 } from '../../redux/selectors/messages';
+import { getSelectedStreamMessages, getSelectedStream, getSelectedStreamChatMessagesStats, getSelectedStreamMessagesPerSOver10, getSelectedStreamMessagesAll } from '../../redux/selectors/messages';
 import { getUsername, getIsLoggedIn } from '../../redux/selectors/user';
 import { ChatMessage, ChatMessagesStats } from '../../interfaces/messages';
 import { addMessage } from '../../redux/actions/messages';
@@ -13,6 +13,7 @@ import ChatMessageComponent from '../../components/chat-message/chat-message';
 import ChatInputComponent from '../../components/chat-input/chat-input';
 import StreamSelectorComponent from '../stream-selector/stream-selector';
 import LoggoutButton from '../logout/logout';
+import JSONDownloadButton from '../json-download/json-download';
 import LoginFormContainter from '../login-form/login-form';
 import { RootReducer } from '../../redux/reducers'
 import ChatRateChart from '../../components/chat-rate-chart/chat-rate-chart';
@@ -22,6 +23,7 @@ interface Props {
     addMessage: (message: ChatMessage) => void;
     setIsLoggedIn: (isLoggedIn: boolean) => void;
     chatMessages: ChatMessage[];
+    chatMessagesAll: ChatMessage[];
     selectedChatStats: ChatMessagesStats;
     selectedChatMessagesPerSOver10: number[];
     selectedStream: string;
@@ -101,6 +103,10 @@ class Chat extends React.Component<Props, State>{
                             <StreamSelectorComponent></StreamSelectorComponent>
                         </Col>
                         <Col span={4}>
+                            <JSONDownloadButton
+                                downloadData={this.props.chatMessagesAll}
+                                JSONName={`${this.props.selectedStream}-chat`}
+                            ></JSONDownloadButton>
                             <LoggoutButton></LoggoutButton>
                         </Col>
                     </Row>
@@ -137,12 +143,13 @@ class Chat extends React.Component<Props, State>{
 
 const mapStateToProps = (state: RootReducer) => {
     const chatMessages = getSelectedStreamMessages(state);
+    const chatMessagesAll = getSelectedStreamMessagesAll(state);
     const selectedStream = getSelectedStream(state);
     const username = getUsername(state);
     const isLoggedIn = getIsLoggedIn(state);
     const selectedChatStats = getSelectedStreamChatMessagesStats(state);
     const selectedChatMessagesPerSOver10 = getSelectedStreamMessagesPerSOver10(state);
-    return { chatMessages, selectedStream, username, isLoggedIn, selectedChatStats, selectedChatMessagesPerSOver10 };
+    return { chatMessages, chatMessagesAll, selectedStream, username, isLoggedIn, selectedChatStats, selectedChatMessagesPerSOver10 };
 }
 
 const mapDispatchToProps = {
